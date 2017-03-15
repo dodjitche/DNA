@@ -15,3 +15,4 @@ code = {     'ttt': 'F', 'tct': 'S', 'tat': 'Y', 'tgt': 'C',
              'gta': 'V', 'gca': 'A', 'gaa': 'E', 'gga': 'G',
              'gtg': 'V', 'gcg': 'A', 'gag': 'E', 'ggg': 'G'
         }
+
