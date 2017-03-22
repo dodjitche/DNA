@@ -80,16 +80,19 @@ printinfo (70,60,50)
 ''' unit 6'''
 
 
-
+'''
 import random
 colors = ['red', 'blue']
 print random.choice (colors)
 
 random.shuffle(colors)
 
+'''
 
 
 
+for i in xrange (3):
+    print (i)
 
 
 
