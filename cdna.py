@@ -16,7 +16,7 @@ for line in lines:
 
 '''
 
-#lower case of  the sequence od cdna 
+#lower case of  the sequence of cdna 
 '''
 filename = 'cdnatext.txt'
 book = open (filename)
@@ -121,3 +121,5 @@ for i in xrange(0,len(cdnaseq), 3):
         Aacid.append(code[codon])
     proteinseq = ''.join(Aacid)
 print (proteinseq)
+
+#tkinter
