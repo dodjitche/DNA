@@ -16,7 +16,7 @@ for line in lines:
 
 '''
 
-#lower case of  the sequence of cdna 
+#lower case of  the sequence of cdna
 '''
 filename = 'cdnatext.txt'
 book = open (filename)
@@ -59,7 +59,7 @@ for line in lowerdna(cdnatext.txt):
 '''
 
 
-    
+
 '''
     print (count,'***', line)
 '''
@@ -122,32 +122,75 @@ for i in xrange(0,len(cdnaseq), 3):
     proteinseq = ''.join(Aacid)
 print (proteinseq)
 '''
+
+
+
+
+
+
+
+
+
+
 #tkinter, practice
+'''
+
+#  function to open a file
+def openfile():
+    with open('cdnatext.txt', 'r') as f:
+        lines= f.readlines()
+
+        lines = lines[8:]
+        cdnaseq = []
+        for line in lines:
+            line = line[:-2]
+            if 'f' in line:
+                line = line[14:]
+            line = line.lower()
+            cdnaseq.append(line)
+        cdnaseq = ''.join(cdnaseq)
+    return cdnaseq
+
+
+
+# Amino Acid(Aacid)
+
+def genprotein (cdnaseq):
+    Aacid = []
+    for i in xrange(0, len(cdnaseq), 3):
+        codon = cdnaseq[i:i + 3]
+        if codon in code:
+            Aacid.append(code[codon])
+        proteinseq = ''.join(Aacid)
+    return proteinseq
+
+#*****
+generate = Button (ActionFrame)
+generate ["text"] = "Generate"
+generate ["command"] = genprotein(openfile())
+generate.pack()
+
+
+
+
+
+ProteinSequence['text'] = 'The sequence is {0}'.format(proteinseq)
 
 '''
-from tkinter import *
 
-root = Tkt()
-'''
+
+
+
+
+
+
 
 from Tkinter import *
 
 
 
-filename = 'cdnatext.txt'
-book = open (filename)
-lines = book.readlines()
-book.close()
 
-lines = lines[8:]
-cdnaseq = []
-for line in lines:
-    line = line[:-2]
-    if 'f' in line:
-        line = line [14:]
-    line = line.lower()
-    cdnaseq.append(line)
-cdnaseq = ''.join(cdnaseq)
+
 
 # replaced  ATG (start codon): Met(M) by Start codon
 
@@ -170,22 +213,68 @@ code = {     'ttt': 'F', 'tct': 'S', 'tat': 'Y', 'tgt': 'C',
         }
 # Amino Acid(Aacid)
 
-def genprotein (cdnaseq):
+def genprotein ():
+    cdnaseq = Entry.get()
     Aacid = []
+    cdnaseq = cdnaseq.lower()
     for i in xrange(0, len(cdnaseq), 3):
         codon = cdnaseq[i:i + 3]
         if codon in code:
             Aacid.append(code[codon])
         proteinseq = ''.join(Aacid)
-    return proteinseq
+        ProteinSequence['text'] = proteinseq
 
+def ClearSearch ():
+    Entry.delete(0, END)
 
 root = Tk()
 
-generate = Button (root)
-generate ["text"] = "Generate"
-generate ["command"] = generate
+OriginalEntry = Frame(root)
+OriginalEntry ['bg'] = 'light blue'
+OriginalEntry.place(x=100, y=100, width= 400)
 
+EntryLabel = Label(OriginalEntry)
+EntryLabel ['text']= 'Enter CDNA sequence'
+EntryLabel.pack()
+
+
+Entry = Entry (OriginalEntry)
+Entry.pack(fill = BOTH)
+
+
+
+ActionFrame = Frame(root)
+ActionFrame ['bg'] = 'yellow'
+
+generate = Button (ActionFrame)
+generate ["text"] = "Generate"
+generate ['command']= genprotein
 generate.pack()
 
+
+clear = Button (ActionFrame)
+clear ['text'] = 'Entry new sequence'
+clear ['command'] = ClearSearch
+clear.pack(side = BOTTOM)
+
+
+
+ResultFrame = Frame(root)
+ResultFrame ['bg'] = 'white'
+
+ResultFrameLabel = Label (ResultFrame)
+ResultFrameLabel ['text']= 'The protein sequence is:'
+ResultFrameLabel.pack(side = LEFT)
+
+ProteinSequence = Label(ResultFrame)
+ProteinSequence.pack( side = RIGHT,  anchor = E)
+
+OriginalEntry.pack(side = LEFT, expand=YES, fill=BOTH )
+ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
+ActionFrame.pack(side = TOP, expand= YES, fill=BOTH )
+
+
 mainloop()
+
+
+

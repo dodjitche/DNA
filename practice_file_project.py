@@ -171,6 +171,8 @@ bulls_on_parade.sing_me_a_song()
 '''
 
 
+
+'''
 from Tkinter import *
 
 class Application (Frame):
@@ -199,3 +201,40 @@ root = Tk()
 app = Application(master = root)
 app.mainloop()
 root.destroy()
+
+'''
+
+
+
+'''
+import sqlite3
+
+connection = sqlite3.connect ('CSCI233/test.CSCI233')
+
+cursor = connection.cursor()
+
+sql = '''CREATE TABLE IF NOT EXISTS Person
+                (PID INTEGER PRIMARY KEY AUTOINCREMENT,
+                NAME VARCHAR(100),
+                HEIGHT INT) '''
+
+cursor.execute(sql)
+
+
+sql = "INSERT INTO Person (NAME, HEIGHT) VALUES ('Jayanam', 174) "
+cursor.execute(sql)
+
+
+
+connection.commit()
+
+
+sql = 'SELECT * FROM Person'
+cursor.execute()
+
+rows = cursor.fetchall()
+
+for row in rows :
+    print(rows)
+
+'''
