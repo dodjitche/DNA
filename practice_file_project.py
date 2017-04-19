@@ -238,3 +238,115 @@ for row in rows :
     print(rows)
 
 '''
+
+
+
+
+
+
+
+
+
+
+'''
+
+from Tkinter import *
+
+
+
+
+
+
+# replaced  ATG (start codon): Met(M) by Start codon
+
+code = {     'ttt': 'F', 'tct': 'S', 'tat': 'Y', 'tgt': 'C',
+             'ttc': 'F', 'tcc': 'S', 'tac': 'Y', 'tgc': 'C',
+             'tta': 'L', 'tca': 'S', 'taa': '*stop*', 'tga': '*stop*',
+             'ttg': 'L', 'tcg': 'S', 'tag': '*stop*', 'tgg': 'W',
+             'ctt': 'L', 'cct': 'P', 'cat': 'H', 'cgt': 'R',
+             'ctc': 'L', 'ccc': 'P', 'cac': 'H', 'cgc': 'R',
+             'cta': 'L', 'cca': 'P', 'caa': 'Q', 'cga': 'R',
+             'ctg': 'L', 'ccg': 'P', 'cag': 'Q', 'cgg': 'R',
+             'att': 'I', 'act': 'T', 'aat': 'N', 'agt': 'S',
+             'atc': 'I', 'acc': 'T', 'aac': 'N', 'agc': 'S',
+             'ata': 'I', 'aca': 'T', 'aaa': 'K', 'aga': 'R',
+             'atg': '*start*', 'acg': 'T', 'aag': 'K', 'agg': 'R',
+             'gtt': 'V', 'gct': 'A', 'gat': 'D', 'ggt': 'G',
+             'gtc': 'V', 'gcc': 'A', 'gac': 'D', 'ggc': 'G',
+             'gta': 'V', 'gca': 'A', 'gaa': 'E', 'gga': 'G',
+             'gtg': 'V', 'gcg': 'A', 'gag': 'E', 'ggg': 'G'
+        }
+# Amino Acid(Aacid)
+
+def genprotein ():
+    cdnaseq = Entry.get()
+    Aacid = []
+    cdnaseq = cdnaseq.lower()
+    for i in xrange(0, len(cdnaseq), 3):
+        codon = cdnaseq[i:i + 3]
+        if codon in code:
+            Aacid.append(code[codon])
+        proteinseq = ''.join(Aacid)
+        ProteinSequence['text'] = proteinseq
+
+def ClearSearch ():
+    Entry.delete(0, END)
+
+root = Tk()
+
+OriginalEntry = Frame(root)
+OriginalEntry ['bg'] = 'light blue'
+OriginalEntry.place(x=100, y=100, width= 400)
+
+EntryLabel = Label(OriginalEntry)
+EntryLabel ['text']= 'Enter CDNA sequence'
+EntryLabel.pack()
+
+Entry = Entry (OriginalEntry)
+Entry.pack(fill = BOTH)
+
+
+
+
+ActionFrame = Frame(root)
+ActionFrame ['bg'] = 'yellow'
+
+generate = Button (ActionFrame)
+generate ["text"] = "Generate"
+generate ['command']= genprotein
+generate.pack()
+
+clear = Button (ActionFrame)
+clear ['text'] = 'Entry new sequence'
+clear ['command'] = ClearSearch
+clear.pack(side = BOTTOM)
+
+
+
+
+
+ResultFrame = Frame(root)
+ResultFrame ['bg'] = 'white'
+
+scrollbar = Scrollbar (ResultFrame)
+scrollbar.pack( side = RIGHT, fill=Y )
+
+
+
+ResultFrameLabel = Label (ResultFrame)
+ResultFrameLabel ['text']= 'The protein sequence is:'
+ResultFrameLabel.pack(side = LEFT)
+
+ProteinSequence = Label(ResultFrame)
+ProteinSequence.pack( side = RIGHT,  anchor = E)
+
+OriginalEntry.pack(side = LEFT, expand=YES, fill=BOTH )
+ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
+ActionFrame.pack(side = TOP, expand= YES, fill=BOTH )
+
+
+mainloop()
+
+
+
+'''

@@ -237,20 +237,25 @@ EntryLabel = Label(OriginalEntry)
 EntryLabel ['text']= 'Enter CDNA sequence'
 EntryLabel.pack()
 
-
 Entry = Entry (OriginalEntry)
 Entry.pack(fill = BOTH)
 
 
 
+
+
+
+
+
 ActionFrame = Frame(root)
 ActionFrame ['bg'] = 'yellow'
+ActionFrame.place(width= 800)
+
 
 generate = Button (ActionFrame)
 generate ["text"] = "Generate"
 generate ['command']= genprotein
 generate.pack()
-
 
 clear = Button (ActionFrame)
 clear ['text'] = 'Entry new sequence'
@@ -259,15 +264,25 @@ clear.pack(side = BOTTOM)
 
 
 
+
+
+
+
+
+
 ResultFrame = Frame(root)
 ResultFrame ['bg'] = 'white'
 
+
+
 ResultFrameLabel = Label (ResultFrame)
 ResultFrameLabel ['text']= 'The protein sequence is:'
-ResultFrameLabel.pack(side = LEFT)
+ResultFrameLabel.pack(side = TOP, anchor = W)
 
-ProteinSequence = Label(ResultFrame)
-ProteinSequence.pack( side = RIGHT,  anchor = E)
+ProteinSequence = Label(ResultFrame, anchor = W)
+ProteinSequence.pack( side = TOP)
+
+
 
 OriginalEntry.pack(side = LEFT, expand=YES, fill=BOTH )
 ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
@@ -275,6 +290,3 @@ ActionFrame.pack(side = TOP, expand= YES, fill=BOTH )
 
 
 mainloop()
-
-
-
