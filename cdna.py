@@ -185,6 +185,8 @@ ProteinSequence['text'] = 'The sequence is {0}'.format(proteinseq)
 
 
 
+
+
 from Tkinter import *
 
 
@@ -222,6 +224,8 @@ def genprotein ():
         if codon in code:
             Aacid.append(code[codon])
         proteinseq = ''.join(Aacid)
+        # proteinseq = '\n'.join([proteinseq[i:i+100] for i in range(0,len(proteinseq), 100)])
+        proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
         ProteinSequence['text'] = proteinseq
 
 def ClearSearch ():
@@ -257,6 +261,10 @@ generate ["text"] = "Generate"
 generate ['command']= genprotein
 generate.pack()
 
+
+
+
+
 clear = Button (ActionFrame)
 clear ['text'] = 'Entry new sequence'
 clear ['command'] = ClearSearch
@@ -271,7 +279,7 @@ clear.pack(side = BOTTOM)
 
 
 ResultFrame = Frame(root)
-ResultFrame ['bg'] = 'white'
+ResultFrame ['bg'] = 'green'
 
 
 
@@ -279,7 +287,7 @@ ResultFrameLabel = Label (ResultFrame)
 ResultFrameLabel ['text']= 'The protein sequence is:'
 ResultFrameLabel.pack(side = TOP, anchor = W)
 
-ProteinSequence = Label(ResultFrame, anchor = W)
+ProteinSequence = Label(ResultFrame, anchor = W, wraplengt = 700)
 ProteinSequence.pack( side = TOP)
 
 
@@ -290,3 +298,46 @@ ActionFrame.pack(side = TOP, expand= YES, fill=BOTH )
 
 
 mainloop()
+
+
+
+#trying sqlite3
+'''
+import sqlite3
+
+conn = sqlite3.connect ('tutorial.db')
+c = conn.cursor ()
+
+def create_table ():
+    c.execute('CREATE TABLE IF NOT EXISTS stuffToPlot (unix REAL, datestamp TEXT, keyword TEXT, value REAL )')
+
+
+
+def data_entry():
+    c.execute ("INSERT INTO stuffToPlot VALUES (23, '2016-01-01', 'Python', 5) ")
+    conn.commit()
+    c.close()
+    conn.close()
+
+create_table()
+data_entry()
+'''
+
+
+import sqlite3
+
+conn = sqlite3.connect ('Allsequences.db')
+c = conn.cursor()
+
+def create_table():
+    c.execute('CREATE TABLE IF NOT EXISTS PStable (DNAname TEXT, DNASequence TEXT, AminoAcidSequence TEXT) ')
+
+def table_values ():
+    c.execute("INSERT INTO PStable VALUES ('ewweewdew', cdnaseq, ProteinSequence ) ")
+    conn.commit()
+    c.close()
+    conn.close()
+
+create_table()
+table_values ()
+
