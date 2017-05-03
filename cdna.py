@@ -288,6 +288,7 @@ ResultFrameLabel ['text']= 'The protein sequence is:'
 ResultFrameLabel.pack(side = TOP, anchor = W)
 
 ProteinSequence = Label(ResultFrame, anchor = W, wraplengt = 700)
+# w = Scrollbar(ResultFrame)
 ProteinSequence.pack( side = TOP)
 
 
@@ -323,7 +324,7 @@ create_table()
 data_entry()
 '''
 
-
+'''
 import sqlite3
 
 conn = sqlite3.connect ('Allsequences.db')
@@ -341,3 +342,4 @@ def table_values ():
 create_table()
 table_values ()
 
+'''

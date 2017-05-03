@@ -213,10 +213,10 @@ connection = sqlite3.connect ('CSCI233/test.CSCI233')
 
 cursor = connection.cursor()
 
-sql = '''CREATE TABLE IF NOT EXISTS Person
+sql = CREATE TABLE IF NOT EXISTS Person
                 (PID INTEGER PRIMARY KEY AUTOINCREMENT,
                 NAME VARCHAR(100),
-                HEIGHT INT) '''
+                HEIGHT INT)
 
 cursor.execute(sql)
 
@@ -245,10 +245,6 @@ for row in rows :
 
 
 
-
-
-
-'''
 
 from Tkinter import *
 
@@ -287,8 +283,10 @@ def genprotein ():
         if codon in code:
             Aacid.append(code[codon])
         proteinseq = ''.join(Aacid)
-        ProteinSequence['text'] = proteinseq
-
+        # proteinseq = '\n'.join([proteinseq[i:i+100] for i in range(0,len(proteinseq), 100)])
+        proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
+        # ProteinSequence['text'] = proteinseq
+        ProteinSequence.insert(END, proteinseq)
 def ClearSearch ():
     Entry.delete(0, END)
 
@@ -324,24 +322,53 @@ clear.pack(side = BOTTOM)
 
 
 
-
-ResultFrame = Frame(root)
-ResultFrame ['bg'] = 'white'
-
-scrollbar = Scrollbar (ResultFrame)
-scrollbar.pack( side = RIGHT, fill=Y )
+# ResultFrameLabel = Label (ResultFrame)
+# ResultFrameLabel ['text']= 'The protein sequence is:'
+# ResultFrameLabel.pack(side = LEFT)
 
 
 
-ResultFrameLabel = Label (ResultFrame)
-ResultFrameLabel ['text']= 'The protein sequence is:'
-ResultFrameLabel.pack(side = LEFT)
 
+
+
+
+
+
+ResultFrame = Frame(root, width=600, height=600)
+ResultFrame.pack( side = RIGHT,  anchor = E)
+ResultFrame.grid_propagate(False)
+ResultFrame.grid_rowconfigure(0, weight=1)
+ResultFrame.grid_columnconfigure(0, weight=1)
+
+# create a Text widget
+ProteinSequence = Text(ResultFrame, borderwidth=3, relief="sunken")
+ProteinSequence.config(font=("consolas", 12), undo=True, wrap='word')
+ProteinSequence.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
+
+# create a Scrollbar and associate it with txt
+scrollb = Scrollbar(ResultFrame, command=ProteinSequence.yview)
+scrollb.grid(row=0, column=1, sticky='nsew')
+ProteinSequence['yscrollcommand'] = scrollb.set
+
+
+
+
+
+'''
 ProteinSequence = Label(ResultFrame)
 ProteinSequence.pack( side = RIGHT,  anchor = E)
+'''
+
+
+'''ProteinSequence = Label(ResultFrame, anchor = W, wraplengt = 700)
+# w = Scrollbar(ResultFrame)
+ProteinSequence.pack( side = TOP)
+
+'''
+
 
 OriginalEntry.pack(side = LEFT, expand=YES, fill=BOTH )
-ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
+# ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
 ActionFrame.pack(side = TOP, expand= YES, fill=BOTH )
 
 
@@ -349,4 +376,40 @@ mainloop()
 
 
 
+
+
+
+
 '''
+import Tkinter as tki # Tkinter -> tkinter in Python3
+
+class App(object):
+
+    def __init__(self):
+        self.root = tki.Tk()
+
+    # create a Frame for the Text and Scrollbar
+        txt_frm = tki.Frame(self.root, width=600, height=600)
+        txt_frm.pack(fill="both", expand=True)
+        # ensure a consistent GUI size
+        txt_frm.grid_propagate(False)
+        # implement stretchability
+        txt_frm.grid_rowconfigure(0, weight=1)
+        txt_frm.grid_columnconfigure(0, weight=1)
+
+    # create a Text widget
+        self.txt = tki.Text(txt_frm, borderwidth=3, relief="sunken")
+        self.txt.config(font=("consolas", 12), undo=True, wrap='word')
+        self.txt.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
+
+    # create a Scrollbar and associate it with txt
+        scrollb = tki.Scrollbar(txt_frm, command=self.txt.yview)
+        scrollb.grid(row=0, column=1, sticky='nsew')
+        self.txt['yscrollcommand'] = scrollb.set
+
+app = App()
+app.root.mainloop()
+'''
+
+
+
