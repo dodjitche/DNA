@@ -284,9 +284,13 @@ def genprotein ():
             Aacid.append(code[codon])
         proteinseq = ''.join(Aacid)
         # proteinseq = '\n'.join([proteinseq[i:i+100] for i in range(0,len(proteinseq), 100)])
-        proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
         # ProteinSequence['text'] = proteinseq
+        # next line : important
+        proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
         ProteinSequence.insert(END, proteinseq)
+    # ProteinSequence.configure(state="disabled")  # disable imput
+
+
 def ClearSearch ():
     Entry.delete(0, END)
 
