@@ -219,27 +219,23 @@ def genprotein():
         proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
         ProteinSequence.insert(END, proteinseq)
     # desactivating the text result
-    ProteinSequence.config(state=DISABLED)
+
     # ProteinSequence.configure(state="disabled")  # disable imput
     proteinseqconv = '*stop*'.join(proteinseq.split('*stop*\n'))
-    print (proteinseqconv)
-
-
+    print(proteinseqconv)
     cdnaseq = ''.join(cdnaseq.split())
 
-    print (cdnaseq)
-    #  cdnaseqchar = cdnaseq[]
-
+    getVAR = ['test',cdnaseq, proteinseqconv]
 
 
     # print ('coding sequence', cdnaseq)
     # print ('protein sequence' , proteinseq)
 
-    # c.execute("INSERT INTO PStable VALUES ( 'test', cdnaseq, proteinseq)", )
-    # conn.commit()
-    # c.close()
-    # conn.close()
-
+    c.execute("INSERT INTO PStable VALUES (?,?,?)", getVAR)
+    conn.commit()
+    c.close()
+    conn.close()
+    ProteinSequence.config(state=DISABLED)
 
 
 # Delete Entry and Result
