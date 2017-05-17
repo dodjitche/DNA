@@ -417,6 +417,126 @@ for row in rows :
 #
 #
 #
+#
+#
+# from Tkinter import *
+#
+# master = Tk()
+#
+# listbox = Listbox(master)
+# listbox.pack()
+#
+# listbox.insert(END, "a list entry")
+#
+# for item in ["one", "two", "three", "four"]:
+#     listbox.insert(END, item)
+#
+# mainloop()
+
+
+
+
+#
+# from tkinter import *
+#
+# def func1():
+#     print("in func1")
+#
+# def func2():
+#     print("in func2")
+#
+# def selection():
+#     try:
+#         dictionary[listbox.selection_get()]()
+#     except:
+#         pass
+#
+# root = Tk()
+#
+# frame = Frame(root)
+# frame.pack()
+#
+# dictionary = {"1":func1, "2":func2}
+#
+# items = StringVar(value=tuple(sorted(dictionary.keys())))
+#
+# listbox = Listbox(frame, listvariable=items, width=15, height=5)
+# listbox.grid(column=0, row=2, rowspan=6, sticky=("n", "w", "e", "s"))
+# listbox.focus()
+#
+# selectButton = Button(frame, text='Select', underline = 0, command=selection)
+# selectButton.grid(column=2, row=4, sticky="e", padx=50, pady=50)
+#
+# root.bind('<Double-1>', lambda x: selectButton.invoke())
+#
+# root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# import sqlite3
+#
+# conn = sqlite3.connect("mydatabase.db")
+# # conn.row_factory = sqlite3.Row
+# cursor = conn.cursor()
+#
+# sql = "SELECT * FROM albums WHERE artist=?"
+# cursor.execute(sql, [("Red")])
+# print cursor.fetchall()  # or use fetchone()
+#
+# print "\nHere's a listing of all the records in the table:\n"
+# for row in cursor.execute("SELECT rowid, * FROM albums ORDER BY artist"):
+#     print row
+#
+# print "\nResults from a LIKE query:\n"
+# sql = """
+# SELECT * FROM albums
+# WHERE title LIKE 'The%'"""
+# cursor.execute(sql)
+# print cursor.fetchall()
+
+
+
+
+
+
+
+
+
+# from Tkinter import *
+#
+# def bind(widget, event):
+#     """Write the body of this function"""
+#
+# if __name__ == '__main__':
+#     frame = Frame()
+#     frame.master.title("Event binding with decorators")
+#     frame.pack()
+#
+#     lb = Listbox(frame, name='lb')
+#     for s in ['One', 'Two', 'Three', 'Four']:
+#         lb.insert(END, s)
+#     lb.pack()
+#
+#     bind(lb, '<<ListboxSelect>>')
+#     def onselect(evt):
+#         w = evt.widget
+#         index = int(w.curselection()[0])
+#         value = w.get(index)
+#         print 'You selected item %d: "%s"' % (index, value)
+#
+#     frame.mainloop()
 
 
 
@@ -424,219 +544,61 @@ for row in rows :
 
 
 from Tkinter import *
-root = Tk()
-
-# replaced  ATG (start codon): Met(M) by Start codon
-
-code = {'ttt': 'F', 'tct': 'S', 'tat': 'Y', 'tgt': 'C',
-        'ttc': 'F', 'tcc': 'S', 'tac': 'Y', 'tgc': 'C',
-        'tta': 'L', 'tca': 'S', 'taa': '*stop*', 'tga': '*stop*',
-        'ttg': 'L', 'tcg': 'S', 'tag': '*stop*', 'tgg': 'W',
-        'ctt': 'L', 'cct': 'P', 'cat': 'H', 'cgt': 'R',
-        'ctc': 'L', 'ccc': 'P', 'cac': 'H', 'cgc': 'R',
-        'cta': 'L', 'cca': 'P', 'caa': 'Q', 'cga': 'R',
-        'ctg': 'L', 'ccg': 'P', 'cag': 'Q', 'cgg': 'R',
-        'att': 'I', 'act': 'T', 'aat': 'N', 'agt': 'S',
-        'atc': 'I', 'acc': 'T', 'aac': 'N', 'agc': 'S',
-        'ata': 'I', 'aca': 'T', 'aaa': 'K', 'aga': 'R',
-        'atg': '*start*', 'acg': 'T', 'aag': 'K', 'agg': 'R',
-        'gtt': 'V', 'gct': 'A', 'gat': 'D', 'ggt': 'G',
-        'gtc': 'V', 'gcc': 'A', 'gac': 'D', 'ggc': 'G',
-        'gta': 'V', 'gca': 'A', 'gaa': 'E', 'gga': 'G',
-        'gtg': 'V', 'gcg': 'A', 'gag': 'E', 'ggg': 'G'
-        }
-# Amino Acid(Aacid)
-
-import sqlite3
-
-conn = sqlite3.connect('Allsequences.db')
-c = conn.cursor()
 
 
-def create_table():
-    c.execute('CREATE TABLE IF NOT EXISTS PStable (DNAname TEXT, DNASequence TEXT, AminoAcidSequence TEXT) ')
+def bind(widget, event):
+    def decorator(func):
+        widget.bind(event, func)
+        return func
 
-create_table()
-
-
-def genprotein():
-    cdnaseq = Entry.get()
-    Aacid = []
-    cdnaseq = cdnaseq.lower()
-    # Activating the text result
-    ProteinSequence.config(state=NORMAL)
-    for i in xrange(0, len(cdnaseq), 3):
-        codon = cdnaseq[i:i + 3]
-        if codon in code:
-            Aacid.append(code[codon])
-        proteinseq = ''.join(Aacid)
-
-        # proteinseq = '\n'.join([proteinseq[i:i+100] for i in range(0,len(proteinseq), 100)])
-        # ProteinSequence['text'] = proteinseq
-        # next line : important
-        proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
-        go = '*stop*'.join(proteinseq.split('*stop*'))
-    ProteinSequence.insert(END, go)
-    ProteinSequence.config(state=DISABLED)
-    print(go, len(go), len(cdnaseq))
-    # desactivating the text result
-
-    # ProteinSequence.configure(state="disabled")  # disable imput
-
-    # print(go)
-    # cdnaseq = ''.join(cdnaseq.split())
-    #
-    # print (cdnaseq)
-
-    #  cdnaseqchar = cdnaseq[]
+    return decorator
 
 
+if __name__ == '__main__':
+    frame = Frame()
+    frame.master.title("Event binding with decorators")
+    frame.pack()
+    #         the lisbox
 
-    # print ('coding sequence', cdnaseq)
-    # print ('protein sequence' , proteinseq)
-
-    # c.execute("INSERT INTO PStable VALUES ( 'test', cdnaseq, proteinseq)", )
-    # conn.commit()
-    # c.close()
-    # conn.close()
+    lb = Listbox(frame, name='lb')
+    for s in ['One', 'Two', 'Three', 'Four']:
+        lb.insert(END, s)
+    lb.pack()
 
 
+    @bind(lb, '<<ListboxSelect>>')
+    def onselect(evt):
+        w = evt.widget
+        index = int(w.curselection()[0])
+        value = w.get(index)
+        print 'You selected item %d: "%s"' % (index, value)
 
-# Delete Entry and Result
 
-def ClearSearch ():
-    ProteinSequence.config(state=NORMAL)
-    Entry.delete(0, END)
-    ProteinSequence.delete("1.0", END)
-    ProteinSequence.config(state=DISABLED)
+    frame.mainloop()
 
 
 
 
-
-
-
-OriginalEntry = Frame(root)
-OriginalEntry['bg'] = 'light blue'
-OriginalEntry.place(x=100, y=100, width=400)
-
-EntryLabel = Label(OriginalEntry)
-EntryLabel['text'] = 'Enter CDNA sequence'
-EntryLabel.pack()
-
-Entry = Entry(OriginalEntry)
-Entry.pack(fill=BOTH)
-
-ActionFrame = Frame(root)
-ActionFrame['bg'] = 'yellow'
-
-
-
-
-# Quiting the UI
-def FQuit():
-    global root
-    root.destroy()
-quit = Button(ActionFrame, text="Quit", command=FQuit)
-quit.pack(side = BOTTOM)
-
-generate = Button(ActionFrame)
-generate["text"] = "Generate"
-generate['command'] = genprotein
-generate.pack()
-
-clear = Button(ActionFrame)
-clear['text'] = 'Entry new sequence'
-clear['command'] = ClearSearch
-clear.pack(side= TOP)
-
-# ResultFrameLabel = Label (ResultFrame)
-# ResultFrameLabel ['text']= 'The protein sequence is:'
-# ResultFrameLabel.pack(side = LEFT)
-
-
-
-
-ResultFrame = Frame(root, width=600, height=600)
-ResultFrame.pack(side=RIGHT, anchor=E)
-ResultFrame.grid_propagate(False)
-ResultFrame.grid_rowconfigure(0, weight=1)
-ResultFrame.grid_columnconfigure(0, weight=1)
-
-# create a Text widget
-ProteinSequence = Text(ResultFrame, borderwidth=3, relief="sunken")
-ProteinSequence.config(font=("consolas", 12), undo=True, wrap='word')
-ProteinSequence.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
-
-ProteinSequence.config(state=DISABLED)
-
-# create a Scrollbar and associate it with txt
-scrollb = Scrollbar(ResultFrame, command=ProteinSequence.yview)
-scrollb.grid(row=0, column=1, sticky='nsew')
-ProteinSequence['yscrollcommand'] = scrollb.set
-
-'''
-ProteinSequence = Label(ResultFrame)
-ProteinSequence.pack( side = RIGHT,  anchor = E)
-'''
-
-'''ProteinSequence = Label(ResultFrame, anchor = W, wraplengt = 700)
-# w = Scrollbar(ResultFrame)
-ProteinSequence.pack( side = TOP)
-
-'''
-
-OriginalEntry.pack(side=LEFT, expand=YES, fill=BOTH)
-# ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
-ActionFrame.pack(side=TOP, expand=YES, fill=BOTH)
-
-mainloop()
-
-# trying sqlite3
-
-# import sqlite3
 #
-# conn = sqlite3.connect ('Allsequences.db')
-# c = conn.cursor()
+# from Tkinter import *
+# import Tkinter
 #
-# def create_table():
-#     c.execute('CREATE TABLE IF NOT EXISTS PStable (DNAname TEXT, DNASequence TEXT, AminoAcidSequence TEXT) ')
+# def immediately(e):
+#     print Lb1.curselection()
 #
-# # def table_values ():
-# #     c.execute("INSERT INTO PStable VALUES ('ewweewdew', 'cdnaseq', 'ProteinSequence' ) ")
-# #     conn.commit()
-# #     c.close()
-# #     conn.close()
 #
-# create_table()
-# table_values ()
-
-
-
-
-
-
-
-
-
-
-'''
-import sqlite3
-
-conn = sqlite3.connect ('tutorial.db')
-c = conn.cursor ()
-
-def create_table ():
-    c.execute('CREATE TABLE IF NOT EXISTS stuffToPlot (unix REAL, datestamp TEXT, keyword TEXT, value REAL )')
-
-
-
-def data_entry():
-    c.execute ("INSERT INTO stuffToPlot VALUES (23, '2016-01-01', 'Python', 5) ")
-    conn.commit()
-    c.close()
-    conn.close()
-
-create_table()
-data_entry()
-'''
+# top = Tk()
+#
+# Lb1 = Listbox(top)
+# Lb1.insert(1, "Python")
+# Lb1.insert(2, "Perl")
+# Lb1.insert(3, "C")
+# Lb1.insert(4, "PHP")
+# Lb1.insert(5, "JSP")
+# Lb1.insert(6, "Ruby")
+#
+# Lb1.pack()
+#
+#
+# Lb1.bind('<<ListboxSelect>>', immediately)
+# top.mainloop()

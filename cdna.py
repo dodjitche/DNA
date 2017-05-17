@@ -201,8 +201,12 @@ def create_table():
 create_table()
 
 
+
+
 def genprotein():
-    cdnaseq = Entry.get()
+    global cdnaseq
+    global proteinseqconv
+    cdnaseq = SequenceEntry.get()
     Aacid = []
     cdnaseq = cdnaseq.lower()
     # Activating the text result
@@ -222,35 +226,47 @@ def genprotein():
 
     # ProteinSequence.configure(state="disabled")  # disable imput
     proteinseqconv = '*stop*'.join(proteinseq.split('*stop*\n'))
-    print(proteinseqconv)
+    # print(proteinseqconv)
     cdnaseq = ''.join(cdnaseq.split())
-
-    getVAR = ['test',cdnaseq, proteinseqconv]
-
-
-    # print ('coding sequence', cdnaseq)
-    # print ('protein sequence' , proteinseq)
-
-    c.execute("INSERT INTO PStable VALUES (?,?,?)", getVAR)
-    conn.commit()
-    c.close()
-    conn.close()
     ProteinSequence.config(state=DISABLED)
 
 
-# Delete Entry and Result
 
+def SaveData():
+    global title
+    ProteinSequence.config(state=NORMAL)
+    cdnaseq = SequenceEntry.get()
+    title = titleEntry.get()
+    getVAR = [title, cdnaseq, proteinseqconv]
+    # MessageBox = ''
+    # if title== '':
+    #     tkMessageBox.showinfo('test 1','test 2')
+    # print ('coding sequence', cdnaseq)
+    # print ('protein sequence' , proteinseq)
+    c.execute("INSERT INTO PStable VALUES (?,?,?)", getVAR)
+    conn.commit()
+    ProteinSequence.config(state=DISABLED)
+    # c.close()
+    # conn.close()
+
+    #         Listbox
+
+    # listbox.insert(END, title)
+
+
+
+# Delete Entry and Result
 def ClearSearch ():
     ProteinSequence.config(state=NORMAL)
-    Entry.delete(0, END)
+    SequenceEntry.delete(0, END)
+    titleEntry.delete(0,END)
     ProteinSequence.delete("1.0", END)
     ProteinSequence.config(state=DISABLED)
 
 
 
 
-
-
+# ****************************************
 
 OriginalEntry = Frame(root)
 OriginalEntry['bg'] = 'light blue'
@@ -258,10 +274,23 @@ OriginalEntry.place(x=100, y=100, width=400)
 
 EntryLabel = Label(OriginalEntry)
 EntryLabel['text'] = 'Enter CDNA sequence'
-EntryLabel.pack()
+EntryLabel.pack(fill= X)
 
-Entry = Entry(OriginalEntry)
-Entry.pack(fill=BOTH)
+SequenceEntry = Entry(OriginalEntry)
+SequenceEntry.pack(fill= X)
+
+
+titleEntry = Entry (OriginalEntry)
+titleEntry.pack(fill = X, side = BOTTOM)
+
+titleLab = Label (OriginalEntry)
+titleLab['text']= 'Enter the name of the sequence'
+titleLab.pack(fill = X, side = BOTTOM)
+
+# titleEntry.place(relx=.5, rely=.5, anchor="center")
+
+# ****************************************
+
 
 ActionFrame = Frame(root)
 ActionFrame['bg'] = 'yellow'
@@ -273,27 +302,45 @@ ActionFrame['bg'] = 'yellow'
 def FQuit():
     global root
     root.destroy()
-quit = Button(ActionFrame, text="Quit", command=FQuit)
-quit.pack(side = BOTTOM)
+quit = Button(ActionFrame, text="Quit",bg = 'red', fg = 'red', command=FQuit)
+quit.pack(fill = X, side = BOTTOM)
 
-generate = Button(ActionFrame)
+generate = Button(ActionFrame, bg ="white" )
 generate["text"] = "Generate"
 generate['command'] = genprotein
-generate.pack()
+generate.pack(fill = X )
+
+Save = Button (ActionFrame)
+Save ['text'] = 'Save'
+Save['command'] = SaveData
+Save.pack(fill = X, side = BOTTOM)
+
+# #########
+
+def RefreshList():
+    for row in c.execute("SELECT DNAname FROM PStable"):
+        listbox.insert(END, row)
+
+Refresh = Button (ActionFrame)
+Refresh ['text'] = 'Refresh the List'
+Refresh['command'] = RefreshList
+Refresh.pack(fill = X, side = BOTTOM)
+
+
 
 clear = Button(ActionFrame)
 clear['text'] = 'Entry new sequence'
 clear['command'] = ClearSearch
-clear.pack(side= TOP)
+clear.pack(fill = X, side= TOP)
 
 # ResultFrameLabel = Label (ResultFrame)
 # ResultFrameLabel ['text']= 'The protein sequence is:'
 # ResultFrameLabel.pack(side = LEFT)
 
 
+# ****************************************
 
-
-ResultFrame = Frame(root, width=600, height=600)
+ResultFrame = Frame(root, width=300, height=300)
 ResultFrame.pack(side=RIGHT, anchor=E)
 ResultFrame.grid_propagate(False)
 ResultFrame.grid_rowconfigure(0, weight=1)
@@ -304,12 +351,48 @@ ProteinSequence = Text(ResultFrame, borderwidth=3, relief="sunken")
 ProteinSequence.config(font=("consolas", 12), undo=True, wrap='word')
 ProteinSequence.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
 
+
 ProteinSequence.config(state=DISABLED)
 
 # create a Scrollbar and associate it with txt
 scrollb = Scrollbar(ResultFrame, command=ProteinSequence.yview)
 scrollb.grid(row=0, column=1, sticky='nsew')
 ProteinSequence['yscrollcommand'] = scrollb.set
+
+
+# ****************************************
+
+
+StoredSeq = Frame(root, width=100, height=100)
+StoredSeq['bg'] = 'green'
+StoredSeq.pack(fill=X, side=BOTTOM)
+
+            #  the list scrollbar
+scrollbar = Scrollbar(StoredSeq, orient=VERTICAL)
+listbox = Listbox(StoredSeq, yscrollcommand=scrollbar.set)
+scrollbar.config(command=listbox.yview)
+scrollbar.pack(side=RIGHT, fill=Y)
+listbox.pack(side=LEFT, fill=BOTH, expand=1)
+
+
+             # List button
+
+def Dclick():
+    print ('works!!!!!')
+
+doubleclick = Button (ActionFrame)
+doubleclick ['text'] = 'Double click'
+doubleclick['command'] = Dclick
+doubleclick.pack(side =BOTTOM)
+
+listbox.bind('<Double-1>', lambda x: doubleclick.invoke() )
+
+
+
+
+
+
+
 
 '''
 ProteinSequence = Label(ResultFrame)
@@ -324,9 +407,26 @@ ProteinSequence.pack( side = TOP)
 
 OriginalEntry.pack(side=LEFT, expand=YES, fill=BOTH)
 # ResultFrame.pack(side=RIGHT, expand=YES, fill=BOTH)
-ActionFrame.pack(side=TOP, expand=YES, fill=BOTH)
+ActionFrame.pack(side=LEFT, expand=YES, fill=BOTH)
 
 mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # trying sqlite3
 
