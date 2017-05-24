@@ -166,6 +166,7 @@ ProteinSequence['text'] = 'The sequence is {0}'.format(proteinseq)
 '''
 
 from Tkinter import *
+import unicodedata
 root = Tk()
 
 # replaced  ATG (start codon): Met(M) by Start codon
@@ -215,43 +216,27 @@ def genprotein():
         codon = cdnaseq[i:i + 3]
         if codon in code:
             Aacid.append(code[codon])
-        proteinseq = ''.join(Aacid)
-
+    proteinseq = ''.join(Aacid)
+    proteinseqconv = proteinseq
         # proteinseq = '\n'.join([proteinseq[i:i+100] for i in range(0,len(proteinseq), 100)])
         # ProteinSequence['text'] = proteinseq
         # next line : important
         proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
-        ProteinSequence.insert(END, proteinseq)
+    proteinseq = '*stop*\n'.join(proteinseq.split('*stop*'))
+    ProteinSequence.insert(END, proteinseq)
+        # proteinseqconv = '*stop*'.join(proteinseq.split('*stop*\n'))
     # desactivating the text result
 
     # ProteinSequence.configure(state="disabled")  # disable imput
-    proteinseqconv = '*stop*'.join(proteinseq.split('*stop*\n'))
-    # print(proteinseqconv)
+
+    print(proteinseqconv)
     cdnaseq = ''.join(cdnaseq.split())
     ProteinSequence.config(state=DISABLED)
 
 
 
-def SaveData():
-    global title
-    ProteinSequence.config(state=NORMAL)
-    cdnaseq = SequenceEntry.get()
-    title = titleEntry.get()
-    getVAR = [title, cdnaseq, proteinseqconv]
-    # MessageBox = ''
-    # if title== '':
-    #     tkMessageBox.showinfo('test 1','test 2')
-    # print ('coding sequence', cdnaseq)
-    # print ('protein sequence' , proteinseq)
-    c.execute("INSERT INTO PStable VALUES (?,?,?)", getVAR)
-    conn.commit()
-    ProteinSequence.config(state=DISABLED)
-    # c.close()
-    # conn.close()
 
-    #         Listbox
 
-    # listbox.insert(END, title)
 
 
 
@@ -262,8 +247,10 @@ def ClearSearch ():
     titleEntry.delete(0,END)
     ProteinSequence.delete("1.0", END)
     ProteinSequence.config(state=DISABLED)
-
-
+# delete data
+# def ClearData ():
+#     showdata.config(state=NORMAL)
+#     showdata.delete("1.0", END)
 
 
 # ****************************************
@@ -295,15 +282,42 @@ titleLab.pack(fill = X, side = BOTTOM)
 ActionFrame = Frame(root)
 ActionFrame['bg'] = 'yellow'
 
-
-
-
 # Quiting the UI
 def FQuit():
     global root
     root.destroy()
 quit = Button(ActionFrame, text="Quit",bg = 'red', fg = 'red', command=FQuit)
 quit.pack(fill = X, side = BOTTOM)
+
+
+
+def info_window():
+    frame1= Toplevel(root, width=100, height=25)
+
+    def SaveData():
+        global title
+        ProteinSequence.config(state=NORMAL)
+        cdnaseq = SequenceEntry.get()
+        title = titleEntry.get()
+        getVAR = [title, cdnaseq, proteinseqconv]
+        # MessageBox = ''
+        # if title== '':
+        #     tkMessageBox.showinfo('test 1','test 2')
+        # print ('coding sequence', cdnaseq)
+        # print ('protein sequence' , proteinseq)
+        c.execute("INSERT INTO PStable VALUES (?,?,?)", getVAR)
+        conn.commit()
+        ProteinSequence.config(state=DISABLED)
+        # c.close()
+        # conn.close()
+
+        #         Listbox
+
+        # listbox.insert(END, title)
+    SaveData()
+    show1 = Label (frame1, text = "The sequences have been stored", width = 50, height= 12).pack()
+
+
 
 generate = Button(ActionFrame, bg ="white" )
 generate["text"] = "Generate"
@@ -312,20 +326,108 @@ generate.pack(fill = X )
 
 Save = Button (ActionFrame)
 Save ['text'] = 'Save'
-Save['command'] = SaveData
+# Save['command'] = SaveData
+Save['command'] = info_window
 Save.pack(fill = X, side = BOTTOM)
+
+
+def info_window2():
+    frame2= Toplevel(root)
+
+    showdataframe = Frame(frame2, width=300, height=300)
+    showdataframe.pack(side=RIGHT, anchor=E)
+    showdataframe.grid_propagate(False)
+    showdataframe.grid_rowconfigure(0, weight=1)
+    showdataframe.grid_columnconfigure(0, weight=1)
+
+    # create a Text widget
+    showdata = Text(showdataframe, borderwidth=3, relief="sunken")
+    showdata.config(font=("consolas", 12), undo=True, wrap='word')
+    showdata.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
+
+    # create a Scrollbar and associate it with txt
+    scrollb = Scrollbar(showdataframe, command=showdata.yview)
+    scrollb.grid(row=0, column=1, sticky='nsew')
+    showdata['yscrollcommand'] = scrollb.set
+
+    def bind(widget, event):
+        def decorator(func):
+            widget.bind(event, func)
+            return func
+
+        return decorator
+
+    StoredSeq = Frame(frame2)
+    StoredSeq['bg'] = 'green'
+    StoredSeq.pack(fill=X, side=LEFT)
+
+    if __name__ == '__main__':
+        StoredSeq.master.title("Data")
+        StoredSeq.pack(fill=X)
+
+        # scrollbar = Scrollbar(StoredSeq, orient=VERTICAL)
+        # listbox = Listbox(StoredSeq, yscrollcommand=scrollbar.set)
+        # scrollbar.config(command=listbox.yview)
+        # scrollbar.pack(side=RIGHT, fill=Y)
+        # listbox.pack(side=LEFT, fill=BOTH, expand=1)
+
+        scrollbar = Scrollbar(StoredSeq, orient=VERTICAL)
+        lb = Listbox(StoredSeq, name='lb', yscrollcommand=scrollbar.set)
+        scrollbar.config(command=lb.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        lb.pack(side=LEFT, fill=BOTH, expand=1)
+
+        for row in c.execute("SELECT DNAname FROM PStable"):
+            lb.insert(END, row)
+        lb.pack(side=LEFT)
+
+        # lb = Listbox(StoredSeq, name='lb')
+        # for row in c.execute("SELECT DNAname FROM PStable"):
+        #     lb.insert(END, row)
+        # lb.pack(side=LEFT)
+
+        @bind(lb, '<<ListboxSelect>>')
+        def onselect(evt):
+            showdata.delete("1.0", END)
+            gg = []
+            global val
+            w = evt.widget
+            index = int(w.curselection()[0])
+            val = w.get(index)
+            val = ''.join(val)
+            val = unicodedata.normalize('NFKD', val).encode('ascii', 'ignore')
+            c.execute("SELECT AminoAcidSequence FROM PStable  WHERE DNAname = '%s'" % val)
+            for line in c.fetchmany():
+                gg += line
+            gg = ''.join(gg)
+            showdata.insert(END, gg)
+
+
+
+
+
+view = Button (ActionFrame)
+view ['text'] = 'View stored sequences'
+view['command'] = info_window2
+view.pack(fill = X, side = BOTTOM)
+
+
 
 # #########
 
-def RefreshList():
-    for row in c.execute("SELECT DNAname FROM PStable"):
-        listbox.insert(END, row)
 
-Refresh = Button (ActionFrame)
-Refresh ['text'] = 'Refresh the List'
-Refresh['command'] = RefreshList
-Refresh.pack(fill = X, side = BOTTOM)
+# 99999999999999999999999
 
+# def RefreshList():
+#     for row in c.execute("SELECT DNAname FROM PStable"):
+#         listbox.insert(END, row)
+#
+# Refresh = Button (ActionFrame)
+# Refresh ['text'] = 'Refresh the List'
+# Refresh['command'] = RefreshList
+# Refresh.pack(fill = X, side = BOTTOM)
+
+# 99999999999999999999999
 
 
 clear = Button(ActionFrame)
@@ -333,6 +435,10 @@ clear['text'] = 'Entry new sequence'
 clear['command'] = ClearSearch
 clear.pack(fill = X, side= TOP)
 
+# cleandata = Button(ActionFrame)
+# cleandata['text'] = 'clear data'
+# cleandata['command'] = ClearData
+# cleandata.pack(fill = X, side= BOTTOM)
 # ResultFrameLabel = Label (ResultFrame)
 # ResultFrameLabel ['text']= 'The protein sequence is:'
 # ResultFrameLabel.pack(side = LEFT)
@@ -340,7 +446,7 @@ clear.pack(fill = X, side= TOP)
 
 # ****************************************
 
-ResultFrame = Frame(root, width=300, height=300)
+ResultFrame = Frame(root, width=500, height=500)
 ResultFrame.pack(side=RIGHT, anchor=E)
 ResultFrame.grid_propagate(False)
 ResultFrame.grid_rowconfigure(0, weight=1)
@@ -363,34 +469,77 @@ ProteinSequence['yscrollcommand'] = scrollb.set
 # ****************************************
 
 
-StoredSeq = Frame(root, width=100, height=100)
-StoredSeq['bg'] = 'green'
-StoredSeq.pack(fill=X, side=BOTTOM)
 
-            #  the list scrollbar
-scrollbar = Scrollbar(StoredSeq, orient=VERTICAL)
-listbox = Listbox(StoredSeq, yscrollcommand=scrollbar.set)
-scrollbar.config(command=listbox.yview)
-scrollbar.pack(side=RIGHT, fill=Y)
-listbox.pack(side=LEFT, fill=BOTH, expand=1)
+
+#             #  the list scrollbar
+# scrollbar = Scrollbar(StoredSeq, orient=VERTICAL)
+# listbox = Listbox(StoredSeq, yscrollcommand=scrollbar.set)
+# scrollbar.config(command=listbox.yview)
+# scrollbar.pack(side=RIGHT, fill=Y)
+# listbox.pack(side=LEFT, fill=BOTH, expand=1)
 
 
              # List button
 
-def Dclick():
-    print ('works!!!!!')
-
-doubleclick = Button (ActionFrame)
-doubleclick ['text'] = 'Double click'
-doubleclick['command'] = Dclick
-doubleclick.pack(side =BOTTOM)
-
-listbox.bind('<Double-1>', lambda x: doubleclick.invoke() )
-
-
+# def Dclick():
+#     print ('works!!!!!')
+#
+# doubleclick = Button (ActionFrame)
+# doubleclick ['text'] = 'Double click'
+# doubleclick['command'] = Dclick
+# doubleclick.pack(side =BOTTOM)
+#
+# listbox.bind('<Double-1>', lambda x: doubleclick.invoke() )
 
 
 
+
+
+# StoredSeq = Frame(root, width=200, height=200)
+# StoredSeq['bg'] = 'green'
+# StoredSeq.pack(fill=X, side=BOTTOM)
+
+
+# ---------------------------------
+#
+# showAAdataframe = Frame(StoredSeq, width=200, height=200)
+# showAAdataframe.pack(side=BOTTOM, anchor=E)
+# showAAdataframe.grid_propagate(False)
+# showAAdataframe.grid_rowconfigure(0, weight=1)
+# showAAdataframe.grid_columnconfigure(0, weight=1)
+#
+# # create a Text widget for the Amino acid sequence
+# showAAdata = Text(showAAdataframe, borderwidth=3, relief="sunken")
+# showAAdata.config(font=("consolas", 12), undo=True, wrap='word')
+# showAAdata.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
+#
+#
+#
+# # create a Scrollbar and associate it with txt
+# scrollb = Scrollbar(showAAdataframe, command=showAAdata.yview)
+# scrollb.grid(row=0, column=1, sticky='nsew')
+# showAAdata['yscrollcommand'] = scrollb.set
+#
+
+
+
+
+
+
+
+
+
+        # print 'You selected item %d: "%s"' % (index, value)
+
+
+#
+
+# doubleclick = Button (ActionFrame)
+# doubleclick ['text'] = 'Double click'
+# doubleclick['command'] = Dclick
+# doubleclick.pack(side =BOTTOM)
+
+# listbox.bind('<Double-1>', lambda x: doubleclick.invoke() )
 
 
 
